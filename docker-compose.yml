@@ -1,0 +1,27 @@
+version: "3.3"
+
+services:
+  api:
+    build: .
+    image: test-server
+    container_name: test-server
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  proxy:
+    image: nginx:alpine
+    container_name: web-proxy
+    restart: unless-stopped
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - 80:80
+    depends_on:
+      - api
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
